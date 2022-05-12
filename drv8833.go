@@ -89,9 +89,16 @@ type PWM interface {
 
 // PWMDevice is a pair of motors with speed control
 type PWMDevice struct {
-	sleep, a1, a2, b1, b2  machine.Pin
-	a1ch, a2ch, b1ch, b2ch uint8
-	pwm                    PWM
+	sleep machine.Pin
+	a1    machine.Pin
+	a2    machine.Pin
+	b1    machine.Pin
+	b2    machine.Pin
+	a1ch  uint8
+	a2ch  uint8
+	b1ch  uint8
+	b2ch  uint8
+	pwm   PWM
 }
 
 // NewWithSpeed returns a new driver with PWM control

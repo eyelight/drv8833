@@ -109,6 +109,10 @@ func NewWithSpeed(sleep, a1, a2, b1, b2 machine.Pin, pwm PWM) PWMDevice {
 		a2:    a2,
 		b1:    b1,
 		b2:    b2,
+		a1ch:  0,
+		a2ch:  0,
+		b1ch:  0,
+		b2ch:  0,
 		pwm:   pwm,
 	}
 }

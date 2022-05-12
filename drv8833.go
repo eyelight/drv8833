@@ -38,19 +38,43 @@ package drv8833
 
 import (
 	"machine"
+	"time"
 )
 
 // Device is a pair of motors without PWM
 type Device struct {
+	sleep, a1, a2, b1, b2 machine.Pin
 }
 
 // New returns a new DRV8833 driver
-func New() Device {
-	return Device{}
+func New(sleep, a1, a2, b1, b2 machine.Pin) Device {
+	return Device{
+		sleep: sleep,
+		a1:    a1,
+		a2:    a2,
+		b1:    b1,
+		b2:    b2,
+	}
 }
 
-// Configure configures the Device
+// Configure configures the Device's Pins and sets the motors to sleep
 func (d *Device) Configure() {
+	d.sleep.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.Sleep()
+	d.a1.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a2.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b1.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b2.Configure(machine.PinConfig{Mode: machine.PinOutput})
+}
+
+// Sleep pulls the sleep pin to 'low'
+func (d *Device) Sleep() {
+	d.sleep.Low()
+}
+
+// Wake pulls the sleep pin 'high'
+func (d *Device) Wake() {
+	d.sleep.High()
 }
 
 // PWM is the interface necessary for controlling the motor
@@ -60,22 +84,68 @@ type PWM interface {
 	Top() uint32
 	Set(channel uint8, value uint32)
 	SetPeriod(period uint64) error
+	SetInverting(channel uint8, inverting bool)
 }
 
 // PWMDevice is a pair of motors with speed control
 type PWMDevice struct {
+	sleep, a1, a2, b1, b2  machine.Pin
+	a1ch, a2ch, b1ch, b2ch uint8
+	pwm                    PWM
 }
 
 // NewWithSpeed returns a new driver with PWM control
-func NewWithSpeed() PWMDevice {
-	return PWMDevice{}
+func NewWithSpeed(sleep, a1, a2, b1, b2 machine.Pin, pwm PWM) PWMDevice {
+	return PWMDevice{
+		sleep: sleep,
+		a1:    a1,
+		a2:    a2,
+		b1:    b1,
+		b2:    b2,
+		pwm:   pwm,
+	}
 }
 
 // Configure configures the PWMDevice. The pins,
 // PWM interface, and channels must already be configured.
-func (d *PWMDevice) Configure() (err error) {
-	d.Stop()
-	return
+func (d *PWMDevice) Configure() {
+	d.sleep.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.Sleep()
+	d.a1.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a1ch, _ = d.pwm.Channel(d.a1)
+	d.a2.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a2ch, _ = d.pwm.Channel(d.a2)
+	d.b1.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b1ch, _ = d.pwm.Channel(d.b1)
+	d.b2.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b2ch, _ = d.pwm.Channel(d.b2)
 }
 
-// Forward turns motor on in forward direction
+// Pulse turns motor on for a duration;
+// the direction is whichever channel is passed as `ch1`
+// slowDecay=false will make the non-PWM channel low, causing fast decay & vice versa
+func (d *PWMDevice) Pulse(ch1, ch2 uint8, period, duration time.Duration, slowDecay bool) {
+	err := d.pwm.SetPeriod(uint64(period))
+	if err != nil {
+		println("Pulse() error: " + err.Error())
+	}
+	d.pwm.Set(ch1, d.pwm.Top()/2) // half duty cycle for our "positive/pwm" pin (TODO: parameterize this?)
+	if slowDecay == true {
+		d.pwm.Set(ch2, d.pwm.Top()) // set opposite polarity to High for slow decay; see truth table above or datasheet
+	} else {
+		d.pwm.Set(ch2, 0) // set opposite polarity to Low for fast decay; see truth table above or datasheet
+	}
+	d.Wake()
+	time.Sleep(duration)
+	d.Sleep()
+}
+
+// Sleep pulls the sleep pin low
+func (d *PWMDevice) Sleep() {
+	d.sleep.Low()
+}
+
+// Wake pulls the sleep pin high
+func (d *PWMDevice) Wake() {
+	d.sleep.High()
+}

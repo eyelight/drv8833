@@ -90,29 +90,29 @@ type PWM interface {
 // PWMDevice is a pair of motors with speed control
 type PWMDevice struct {
 	sleep machine.Pin
-	a1    machine.Pin
-	a2    machine.Pin
-	b1    machine.Pin
-	b2    machine.Pin
-	a1ch  uint8
-	a2ch  uint8
-	b1ch  uint8
-	b2ch  uint8
+	a1pin machine.Pin
+	a2pin machine.Pin
+	b1pin machine.Pin
+	b2pin machine.Pin
+	a1    uint8
+	a2    uint8
+	b1    uint8
+	b2    uint8
 	pwm   PWM
 }
 
 // NewWithSpeed returns a new driver with PWM control
-func NewWithSpeed(sleep, a1, a2, b1, b2 machine.Pin, pwm PWM) PWMDevice {
+func NewWithSpeed(sleep, a1pin, a2pin, b1pin, b2pin machine.Pin, pwm PWM) PWMDevice {
 	return PWMDevice{
 		sleep: sleep,
-		a1:    a1,
-		a2:    a2,
-		b1:    b1,
-		b2:    b2,
-		a1ch:  0,
-		a2ch:  0,
-		b1ch:  0,
-		b2ch:  0,
+		a1pin: a1pin,
+		a2pin: a2pin,
+		b1pin: b1pin,
+		b2pin: b2pin,
+		a1:    0,
+		a2:    0,
+		b1:    0,
+		b2:    0,
 		pwm:   pwm,
 	}
 }
@@ -122,14 +122,14 @@ func NewWithSpeed(sleep, a1, a2, b1, b2 machine.Pin, pwm PWM) PWMDevice {
 func (d *PWMDevice) Configure() {
 	d.sleep.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	d.Sleep()
-	d.a1.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	d.a1ch, _ = d.pwm.Channel(d.a1)
-	d.a2.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	d.a2ch, _ = d.pwm.Channel(d.a2)
-	d.b1.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	d.b1ch, _ = d.pwm.Channel(d.b1)
-	d.b2.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	d.b2ch, _ = d.pwm.Channel(d.b2)
+	d.a1pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a1, _ = d.pwm.Channel(d.a1pin)
+	d.a2pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a2, _ = d.pwm.Channel(d.a2pin)
+	d.b1pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b1, _ = d.pwm.Channel(d.b1pin)
+	d.b2pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b2, _ = d.pwm.Channel(d.b2pin)
 }
 
 // Pulse turns motor on for a duration;

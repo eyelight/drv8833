@@ -43,17 +43,17 @@ import (
 
 // Device is a pair of motors without PWM
 type Device struct {
-	sleep, a1, a2, b1, b2 machine.Pin
+	sleep, a1pin, a2pin, b1pin, b2pin machine.Pin
 }
 
 // New returns a new DRV8833 driver
-func New(sleep, a1, a2, b1, b2 machine.Pin) Device {
+func New(sleep, a1pin, a2pin, b1pin, b2pin machine.Pin) Device {
 	return Device{
 		sleep: sleep,
-		a1:    a1,
-		a2:    a2,
-		b1:    b1,
-		b2:    b2,
+		a1pin: a1pin,
+		a2pin: a2pin,
+		b1pin: b1pin,
+		b2pin: b2pin,
 	}
 }
 
@@ -61,10 +61,10 @@ func New(sleep, a1, a2, b1, b2 machine.Pin) Device {
 func (d *Device) Configure() {
 	d.sleep.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	d.Sleep()
-	d.a1.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	d.a2.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	d.b1.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	d.b2.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a1pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a2pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b1pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b2pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
 }
 
 // Sleep pulls the sleep pin to 'low'

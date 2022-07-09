@@ -78,21 +78,25 @@ func (d *Device) Wake() {
 	d.sleep.High()
 }
 
+// BrakeA pulls both A1 & A2 pins high
 func (d *Device) BrakeA() {
 	d.a1pin.High()
 	d.a2pin.High()
 }
 
+// BrakeB pulls both B1 & B2 pins high
 func (d *Device) BrakeB() {
 	d.b1pin.High()
 	d.b2pin.High()
 }
 
+// CoastA pulls both A1 & A2 pins low
 func (d *Device) CoastA() {
 	d.a1pin.Low()
 	d.a2pin.Low()
 }
 
+// CoastB pulls both B1 & B2 pins low
 func (d *Device) CoastB() {
 	d.b1pin.Low()
 	d.b2pin.Low()
@@ -109,7 +113,7 @@ type PWM interface {
 	SetInverting(channel uint8, inverting bool)
 }
 
-// PWMDevice is a pair of h-bridges with PWM control
+// PWMDevice is a pair of h-bridges as found on the DRV8833 chip, with PWM support
 type PWMDevice struct {
 	sleep machine.Pin // PWM not necessary
 	a1pin machine.Pin // must be PWM pin

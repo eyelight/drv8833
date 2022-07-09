@@ -3,6 +3,8 @@
 // The DRV8833 has a wide power supply range from 2.7v - 10.8v
 // Included are methods that seem appropriate for DC motors Run() & latching solenoids Pulse(), but not steppers
 //
+// Create a PWM-aware PWMDevice or non-PWM aware Device
+//
 // Datasheet: https://www.ti.com/lit/ds/symlink/drv8833.pdf
 //
 // Pins
@@ -47,7 +49,7 @@ type Device struct {
 	sleep, a1pin, a2pin, b1pin, b2pin machine.Pin
 }
 
-// New returns a new DRV8833 driver
+// New returns a new Device (non-PWM)
 func New(sleep, a1pin, a2pin, b1pin, b2pin machine.Pin) Device {
 	return Device{
 		sleep: sleep,
@@ -68,12 +70,12 @@ func (d *Device) Configure() {
 	d.b2pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
 }
 
-// Sleep pulls the sleep pin to 'low'
+// Sleep pulls the sleep pin low
 func (d *Device) Sleep() {
 	d.sleep.Low()
 }
 
-// Wake pulls the sleep pin 'high'
+// Wake pulls the sleep pin high
 func (d *Device) Wake() {
 	d.sleep.High()
 }

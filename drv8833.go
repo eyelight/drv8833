@@ -163,28 +163,28 @@ func (d *PWMDevice) Configure() {
 	d.Sleep() // no funny business before we want to use these
 
 	// Configure pins as output & obtain PWM channels
-	d.a1pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a1pin.Configure(machine.PinConfig{Mode: machine.PinPWM})
 	a1, err := d.PwmA.Channel(d.a1pin)
 	if err != nil {
 		println("error obtaining DRV8833 a1 channel: " + err.Error())
 	}
 	d.A1 = a1
 
-	d.a2pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.a2pin.Configure(machine.PinConfig{Mode: machine.PinPWM})
 	a2, err := d.PwmA.Channel(d.a2pin)
 	if err != nil {
 		println("error obtaining DRV8833 a2 channel: " + err.Error())
 	}
 	d.A2 = a2
 
-	d.b1pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b1pin.Configure(machine.PinConfig{Mode: machine.PinPWM})
 	b1, err := d.PwmB.Channel(d.b1pin)
 	if err != nil {
 		println("error obtaining DRV8833 b1 channel: " + err.Error())
 	}
 	d.B1 = b1
 
-	d.b2pin.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	d.b2pin.Configure(machine.PinConfig{Mode: machine.PinPWM})
 	b2, err := d.PwmB.Channel(d.b2pin)
 	if err != nil {
 		println("error obtaining DRV8833 b2 channel: " + err.Error())

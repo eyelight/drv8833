@@ -41,6 +41,7 @@ package drv8833
 
 import (
 	"machine"
+	"strconv"
 	"time"
 )
 
@@ -163,6 +164,27 @@ func (d *PWMDevice) Configure() {
 	d.Sleep() // no funny business before we want to use these
 
 	// Configure pins as output & obtain PWM channels
+	// get the PWMPeripheral for the pin
+	if slice, err := machine.PWMPeripheral(d.a1pin); err == nil {
+		println("a1 => " + strconv.FormatInt(int64(slice), 10))
+	} else {
+		println(err.Error())
+	}
+	if slice, err := machine.PWMPeripheral(d.a2pin); err == nil {
+		println("a2 => " + strconv.FormatInt(int64(slice), 10))
+	} else {
+		println(err.Error())
+	}
+	if slice, err := machine.PWMPeripheral(d.b1pin); err == nil {
+		println("b1 => " + strconv.FormatInt(int64(slice), 10))
+	} else {
+		println(err.Error())
+	}
+	if slice, err := machine.PWMPeripheral(d.b2pin); err == nil {
+		println("b2 => " + strconv.FormatInt(int64(slice), 10))
+	} else {
+		println(err.Error())
+	}
 	d.a1pin.Configure(machine.PinConfig{Mode: machine.PinPWM})
 	a1, err := d.PwmA.Channel(d.a1pin)
 	if err != nil {
